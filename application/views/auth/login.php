@@ -14,14 +14,21 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Login</h1>
                                     </div>
+                                    <?php if ($this->session->flashdata('flash')) : ?>
+                                        <div class="alert alert-success alert-dismissable fade show" role="alert">
+                                            <strong><?= $this->session->flashdata('flash'); ?></strong>
+                                            <button type="button" class="close" data-dismiss="alert"></button>
+                                        </div>
+                                        
+                                    <?php
+                                        unset($_SESSION['flash']); 
+                                    endif; ?>
                                     <form class="user">
                                         <div class="form-group">
-                                            <input type="email" class="form-control form-control-user"
-                                                id="email" name="email" placeholder="Enter Email Address...">
+                                            <input type="email" class="form-control form-control-user" id="email" name="email" placeholder="Enter Email Address...">
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" class="form-control form-control-user"
-                                                id="password" name="password" placeholder="Password">
+                                            <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="Password">
                                         </div>
                                         <button type="submit" name="submit" class="btn btn-primary btn-user btn-block">
                                             Login
