@@ -1,0 +1,1 @@
+<h1>Hallo <?= $user['name'] ?> (user)</h1>
