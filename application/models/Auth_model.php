@@ -10,7 +10,8 @@ class Auth_model extends CI_Model
             'password' => password_hash($this->input->post('password1'), PASSWORD_DEFAULT),
             'profile_img' => 'default.jpg',
             'is_active' => 1,
-            'role_id' => 2
+            'role_id' => 2,
+            'date_created' => time()
         ];
 
         $this->db->insert('user', $data);
