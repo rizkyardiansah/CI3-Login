@@ -23,4 +23,17 @@ class Auth_model extends CI_Model
 
         return $this->db->get_where('user', ['email' => $email])->row_array();
     }
+
+    public function getUserMenu() {
+        $userRole = $this->session->userdata('role');
+
+        $query = "SELECT `menu`.`id`, `menu`.`name`
+                    FROM `menu` JOIN `access`
+                    ON `menu`.`id` = `access`.`menu_id`
+                    WHERE `access`.`role_id` = $userRole
+                    ";
+
+        $result = $this->db->query($query)->result_array();
+        return $result;
+    }
 }

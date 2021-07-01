@@ -39,8 +39,9 @@ class Auth extends CI_Controller
                 if (password_verify($inputPassword, $userData['password'])) {
                     // $this->session->set_flashdata('flash', ['type' => 'success', 'text' => 'Login Success!']);
                     $this->session->set_userdata(['email' => $userData['email'], 'role' => $userData['role_id']]);
-
+                    //$data['menu'] = $this->authMod->getUserMenu();
                     if ($userData['role_id'] == 1) {
+                        //var_dump($data['menu']);
                         redirect('admin/index');
                     } else if ($userData['role_id'] == 2) {
                         redirect('user/index');

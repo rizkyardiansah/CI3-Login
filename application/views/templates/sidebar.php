@@ -12,35 +12,40 @@
             <div class="sidebar-brand-text mx-3">CI3 Login</div>
         </a>
 
-        <!-- Divider -->
-        <hr class="sidebar-divider">
+        <?php
+        $userRole = $this->session->userdata('role');
 
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            Administrator
-        </div>
+        $query = "SELECT `menu`.`id`, `menu`.`name`
+                    FROM `menu` JOIN `access`
+                    ON `menu`.`id` = `access`.`menu_id`
+                    WHERE `access`.`role_id` = $userRole
+                    ORDER BY `menu`.`id` ASC";
+
+        $menus = $this->db->query($query)->result_array();
+
+        foreach ($menus as $menu) :
+        ?>
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                <?= $menu['name'] ?>
+            </div>
+
+            <?php
+            $submenus = $this->db->get_where('submenu', ['menu_id' => $menu['id']])->result_array();
+            foreach ($submenus as $submenu) :
+            ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= $submenu['url']; ?>">
+                        <i class="<?= $submenu['icon']; ?>"></i>
+                        <span><?= $submenu['name']; ?></span></a>
+                </li>
+            <?php endforeach; ?>
+        <?php endforeach; ?>
 
         <!-- Nav Item - Dashboard -->
-        <li class="nav-item">
-            <a class="nav-link" href="index.html">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>Dashboard</span></a>
-        </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider">
-
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            User
-        </div>
-
-        <!-- Nav Item - My Profile -->
-        <li class="nav-item">
-            <a class="nav-link" href="index.html">
-            <i class="far fa-fw fa-user-circle"></i>
-                <span>My Profile</span></a>
-        </li>
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
@@ -48,7 +53,7 @@
         <!-- Nav Item - Logout -->
         <li class="nav-item">
             <a class="nav-link" href="<?= base_url('auth/logout'); ?>">
-            <i class="fas fa-fw fa-sign-out-alt"></i>
+                <i class="fas fa-fw fa-sign-out-alt"></i>
                 <span>Logout</span></a>
         </li>
 
