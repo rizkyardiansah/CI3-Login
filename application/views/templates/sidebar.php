@@ -13,7 +13,7 @@
         </a>
 
         <?php
-        $userRole = $this->session->userdata('role');
+        $userRole = $this->session->userdata('role_id');
 
         $query = "SELECT `menu`.`id`, `menu`.`name`
                     FROM `menu` JOIN `access`

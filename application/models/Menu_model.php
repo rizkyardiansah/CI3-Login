@@ -28,12 +28,12 @@ class Menu_model extends CI_Model
 
     public function addNewSubmenu()
     {
-        $data= [
-        'name' => htmlspecialchars($this->input->post('name',true)),
-        'menu_id' => $this->input->post('menu_id'),
-        'icon' => htmlspecialchars($this->input->post('icon',true)),
-        'url' => htmlspecialchars($this->input->post('url',true)),
-        'is_active' => $this->input->post('is_active') == 1 ? 1 : 0
+        $data = [
+            'name' => htmlspecialchars($this->input->post('name', true)),
+            'menu_id' => $this->input->post('menu_id'),
+            'icon' => htmlspecialchars($this->input->post('icon', true)),
+            'url' => htmlspecialchars($this->input->post('url', true)),
+            'is_active' => $this->input->post('is_active') == 1 ? 1 : 0
         ];
 
         $this->db->insert('submenu', $data);

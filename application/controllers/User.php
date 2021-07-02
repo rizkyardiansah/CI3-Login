@@ -9,6 +9,7 @@ class User extends CI_Controller
     {
         global $user;
         parent::__construct();
+        checkAccess();
         $email = $this->session->userdata('email');
         $user = $this->db->get_where('user', ['email' => $email])->row_array();
     }

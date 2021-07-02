@@ -37,7 +37,7 @@ class Auth extends CI_Controller
             if ($userData['is_active'] == 1) {
                 //apakah email dan password sesuai dengan yang ada di database
                 if (password_verify($inputPassword, $userData['password'])) {
-                    $this->session->set_userdata(['email' => $userData['email'], 'role' => $userData['role_id']]);
+                    $this->session->set_userdata(['email' => $userData['email'], 'role_id' => $userData['role_id']]);
                     if ($userData['role_id'] == 1) {
                         redirect('admin/index');
                     } else if ($userData['role_id'] == 2) {
@@ -79,8 +79,12 @@ class Auth extends CI_Controller
     public function logout()
     {
         $this->session->unset_userdata('email');
-        $this->session->unset_userdata('role');
+        $this->session->unset_userdata('role_id');
         $this->session->set_flashdata('flash', ['type' => 'success', 'text' => 'Logout success!']);
         redirect('auth/index');
+    }
+
+    public function blocked() {
+        $this->load->view('auth/blocked');
     }
 }
