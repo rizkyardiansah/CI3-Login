@@ -9,7 +9,7 @@ class Menu extends CI_Controller
     {
         global $user;
         parent::__construct();
-        checkAccess();
+        restrictAccess();
         $email = $this->session->userdata('email');
         $user = $this->db->get_where('user', ['email' => $email])->row_array();
 

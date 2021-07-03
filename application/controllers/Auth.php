@@ -6,6 +6,14 @@ class Auth extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+
+        //get the method that user want to access
+        $method = $this->uri->segment(2); 
+
+        //if user still loged in and want to access auth controller (except logout method)
+        //redirect user to its profile page
+        if (!$method == 'logout' && $this->session->userdata('email')) { redirect('user/index'); }
+
         $this->load->library('form_validation');
         $this->load->model('Auth_model', 'authMod');
     }
@@ -84,7 +92,8 @@ class Auth extends CI_Controller
         redirect('auth/index');
     }
 
-    public function blocked() {
+    public function blocked()
+    {
         $this->load->view('auth/blocked');
     }
 }

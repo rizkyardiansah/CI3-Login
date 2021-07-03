@@ -44,7 +44,7 @@
                     <?php endif; ?>
 
                     <?php if ($submenu['is_active'] == 1) : ?>
-                        <a class="nav-link" href="<?= base_url() . $submenu['url']; ?>">
+                        <a class="nav-link pt-0" href="<?= base_url() . $submenu['url']; ?>">
                         <?php else : ?>
                             <a href="" class="nav-link disabled">
                             <?php endif; ?>
