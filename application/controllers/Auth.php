@@ -8,11 +8,13 @@ class Auth extends CI_Controller
         parent::__construct();
 
         //get the method that user want to access
-        $method = $this->uri->segment(2); 
+        $method = $this->uri->segment(2);
 
         //if user still loged in and want to access auth controller (except logout method)
         //redirect user to its profile page
-        if (!$method == 'logout' && $this->session->userdata('email')) { redirect('user/index'); }
+        if (!$method == 'logout' && $this->session->userdata('email')) {
+            redirect('user/index');
+        }
 
         $this->load->library('form_validation');
         $this->load->model('Auth_model', 'authMod');
@@ -26,42 +28,12 @@ class Auth extends CI_Controller
 
         //apabila lolos validasi
         if ($this->form_validation->run()) {
-            $this->userLogin();
+            $this->authMod->userLogin();
         } else { // jika tidak lolos validasi
             $this->load->view('templates/auth_header', $data);
             $this->load->view('auth/login');
             $this->load->view('templates/auth_footer');
         }
-    }
-
-    private function userLogin()
-    {
-        $userData = $this->authMod->getUserData();
-        $inputPassword = $this->input->post('password');
-
-        //apakah email terdaftar
-        if ($userData) {
-            //apakah email sudah teraktivasi
-            if ($userData['is_active'] == 1) {
-                //apakah email dan password sesuai dengan yang ada di database
-                if (password_verify($inputPassword, $userData['password'])) {
-                    $this->session->set_userdata(['email' => $userData['email'], 'role_id' => $userData['role_id']]);
-                    if ($userData['role_id'] == 1) {
-                        redirect('admin/index');
-                    } else if ($userData['role_id'] == 2) {
-                        redirect('user/index');
-                    }
-                } else {
-                    $this->session->set_flashdata('flash', ['type' => 'danger', 'text' => 'Your password is wrong!']);
-                }
-            } else {
-                $this->session->set_flashdata('flash', ['type' => 'danger', 'text' => 'Your account has not been activated!']);
-            }
-        } else {
-            $this->session->set_flashdata('flash', ['type' => 'danger', 'text' => 'Your account is not registered!']);
-        }
-
-        redirect('auth/index');
     }
 
     public function registration()
@@ -75,13 +47,21 @@ class Auth extends CI_Controller
 
         if ($this->form_validation->run()) {
             $this->authMod->insertDataRegistration();
-            $this->session->set_flashdata('flash', ['type' => 'success', 'text' => 'Registration success!']);
+            $this->session->set_flashdata('flash', ['type' => 'success', 'text' => 'Registration success! Please activate your accont!']);
             redirect('auth/index');
         } else {
             $this->load->view('templates/auth_header', $data);
             $this->load->view('auth/registration');
             $this->load->view('templates/auth_footer');
         }
+    }
+
+    public function verify()
+    {
+        $email = $this->input->get('email');
+        $token = $this->input->get('token');
+        $this->authMod->verifyAccount($email, urldecode($token));
+        redirect('auth/index');
     }
 
     public function logout()
