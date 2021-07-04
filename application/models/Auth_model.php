@@ -14,16 +14,6 @@ class Auth_model extends CI_Model
             'date_created' => time()
         ];
         $this->db->insert('user', $data);
-
-
-        $token = base64_encode(random_bytes(32));
-        $this->db->insert('activation', [
-            'email' => $data['email'],
-            'token' => $token,
-            'date_created' => time()
-        ]);
-
-        $this->sendEmail($data['email'], $token, 'verify');
     }
 
     public function getUserData()
@@ -77,9 +67,17 @@ class Auth_model extends CI_Model
         redirect('auth/index');
     }
 
-    public function sendEmail($email, $token, $type)
+    public function sendEmail($type)
     {
         $email = $this->input->post('email');
+        $token = base64_encode(random_bytes(32));
+
+
+        $data = [
+            'email' => $email,
+            'token' => $token,
+            'date_created' => time()
+        ];
 
         $config = [
             'protocol' => 'smtp',
@@ -97,14 +95,24 @@ class Auth_model extends CI_Model
 
         $this->email->from('ci3emailsender@gmail.com', 'CI3 Email Sender');
         $this->email->to($email);
+
         if ($type == 'verify') {
+            //send email
             $this->email->subject('Account Activation');
             $this->email->message('Click this link to activate your account: <a href="' . base_url('auth/verify') . '?email=' . $email . '&token=' . urlencode($token) . '">Activate</a>');
+
+            //insert data to table activation
+            $this->db->insert('activation', $data);
+        } else if ($type == 'forgot_password') {
+            //send email
+            $this->email->subject('Reset Password');
+            $this->email->message('Click this link to reset your password: <a href="' . base_url('auth/resetpassword') . '?email=' . $email . '&token=' . urlencode($token) . '">Reset Password</a>');
+
+            //insert data to table forgot_password
+            $this->db->insert('forgot_password', $data);
         }
 
-        if (!$this->email->send()) {
-            $this->email->print_debugger();
-        }
+        $this->email->send();
     }
 
     public function verifyAccount($email, $token)
@@ -131,5 +139,34 @@ class Auth_model extends CI_Model
         } else {
             $this->session->set_flashdata('flash', ['type' => 'danger', 'text' => 'Your email is wrong!']);
         }
+    }
+
+
+    public function verifyPassword($email, $token)
+    {
+        $forPassData = $this->db->get_where('forgot_password', ['email' => $email])->row_array();
+        $userData = $this->db->get_where('user', ['email' => $email])->row_array();
+
+        if (!$forPassData || !$userData) {
+            $this->session->set_flashdata('flash', ['type' => 'danger', 'text' => 'Your email is wrong!']);
+            redirect('auth/forgotpassword');
+        } else {
+            if ($userData['is_active'] == 0) {
+                $this->session->set_flashdata('flash', ['type' => 'danger', 'text' => 'Your account is not activated!']);
+                redirect('auth/forgotpassword');
+            } else {
+                if ($forPassData['token'] != $token) {
+                    $this->session->set_flashdata('flash', ['type' => 'danger', 'text' => 'Your token is invalid!']);
+                    redirect('auth/forgotpassword');
+                } else {
+                    if (time() - $forPassData['date_created'] > (60 * 60 * 24)) {
+                        $this->db->delete('forgot_password', ['email' => $email]);
+                        $this->session->set_flashdata('flash', ['type' => 'danger', 'text' => 'Your token is expired!']);
+                        redirect('auth/forgotpassword');
+                    }
+                }
+            }
+        }
+
     }
 }

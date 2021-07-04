@@ -47,6 +47,7 @@ class Auth extends CI_Controller
 
         if ($this->form_validation->run()) {
             $this->authMod->insertDataRegistration();
+            $this->authMod->sendEmail('verify');
             $this->session->set_flashdata('flash', ['type' => 'success', 'text' => 'Registration success! Please activate your accont!']);
             redirect('auth/index');
         } else {
@@ -62,6 +63,46 @@ class Auth extends CI_Controller
         $token = $this->input->get('token');
         $this->authMod->verifyAccount($email, urldecode($token));
         redirect('auth/index');
+    }
+
+    public function forgotPassword()
+    {
+        $data['title'] = 'Forgot Password';
+
+        $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email');
+
+        //apabila lolos validasi
+        if ($this->form_validation->run()) {
+            $this->authMod->sendEmail('forgot_password');
+            $this->session->set_flashdata('flash', ['type' => 'success', 'text' => 'Reset token has been sent to your email!']);
+            redirect('auth/index');
+        } else { // jika tidak lolos validasi
+            $this->load->view('templates/auth_header', $data);
+            $this->load->view('auth/forgotpassword');
+            $this->load->view('templates/auth_footer');
+        }
+    }
+
+    public function resetpassword()
+    {
+        $email = $this->input->get('email');
+        $token = $this->input->get('token');
+        $this->authMod->verifyPassword($email, urldecode($token));
+        $data['title'] = 'Reset Password';
+
+        $this->form_validation->set_rules('password1', 'New Password', 'required|trim|min_length[3]|matches[password2]');
+        $this->form_validation->set_rules('password2', 'Repeat New Password', 'required|trim|min_length[3]|matches[password1]');
+        if ($this->form_validation->run()) {
+            $this->db->set('password', password_hash($this->input->post('password1'), PASSWORD_DEFAULT));
+            $this->db->where('email', $email);
+            $this->db->update('user');
+            $this->session->set_flashdata('flash', ['type' => 'success', 'text' => 'Your password has been reset!']);
+            redirect('auth/index');
+        } else {
+            $this->load->view('templates/auth_header', $data);
+            $this->load->view('auth/resetpassword');
+            $this->load->view('templates/auth_footer');
+        }
     }
 
     public function logout()
