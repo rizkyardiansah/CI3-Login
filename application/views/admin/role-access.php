@@ -17,7 +17,7 @@
 
             <h3><?= $specific_role['role'] ?></h3>
 
-            <form action="<?= base_url('admin/change/') . $specific_role['id']; ?>" method="POST">
+            <form action="" method="POST">
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -49,7 +49,7 @@
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-                <button type="submit" class="btn btn-primary float-right mt-2 mr-3">Save Changes</button>
+                <button type="submit" name="submit" value="on" class="btn btn-primary float-right mt-2 mr-3">Save Changes</button>
             </form>
             <a href="<?= base_url('admin/role'); ?>" class="btn btn-secondary float-right mt-2 mr-2">Cancel</a>
         </div>

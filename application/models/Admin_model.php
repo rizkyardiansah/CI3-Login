@@ -28,22 +28,57 @@ class Admin_model extends CI_Model
         return $this->db->get_where('role', ['id' => $id])->row_array();
     }
 
-    public function changeAccess($menuId, $oldRoleId, $newRoleId)
+    public function addRole()
     {
-        $totalResult = $this->db->get_where('access', ['menu_id' => $menuId, 'role_id' => $oldRoleId])->num_rows();
+        $roleName = htmlspecialchars($this->input->post('name', true));
+        $this->db->insert('role', ['role' => $roleName]);
+    }
 
-        //return $totalResult;
+    public function updateRole() {
+        $roleId = $this->input->post('id');
+        $roleName = $this->input->post('name');
 
-        if ($newRoleId > 0 && $totalResult < 1) {
-            $this->db->insert('access', ['role_id' => $oldRoleId, 'menu_id' => $menuId]);
-            return $menuId . $newRoleId . ' inserted';
-            die;
+        $this->db->set('role', $roleName);
+        $this->db->where('id', $roleId);
+        $this->db->update('role');
+    }
+
+    public function deleteRoleById($id) {
+        $this->db->delete('role', ['id' => $id]);
+    }
+
+    public function changeAccess($roleId)
+    {
+        $menu = $this->getAllMenu();
+        $post = $this->input->post();
+
+        $outerArr = [];
+        foreach ($menu as $m) {
+            $innerArr = $m;
+            $innerArr['role_id'] = 0;
+
+            foreach ($post as $k => $v) {
+                if ($innerArr['role_id'] == 0 && $innerArr['name'] == $k) {
+                    $innerArr['role_id'] = $roleId;
+                    break;
+                }
+            }
+            $outerArr[] = $innerArr;
         }
 
-        if ($newRoleId == 0 && $totalResult > 0) {
-            $this->db->delete('access', ['role_id' => $oldRoleId, 'menu_id' => $menuId]);
-            return $menuId . $newRoleId . ' deleted';
-            die;
+        foreach ($outerArr as $innerArr) {
+            $menuId = $innerArr['id'];
+            $oldRoleId = $roleId;
+            $newRoleId = $innerArr['role_id'];
+
+            $totalResult = $this->db->get_where('access', ['menu_id' => $menuId, 'role_id' => $oldRoleId])->num_rows();
+
+
+            if ($newRoleId > 0 && $totalResult < 1) {
+                $this->db->insert('access', ['role_id' => $oldRoleId, 'menu_id' => $menuId]);
+            } else if ($newRoleId == 0 && $totalResult > 0) {
+                $this->db->delete('access', ['role_id' => $oldRoleId, 'menu_id' => $menuId]);
+            }
         }
     }
 }
