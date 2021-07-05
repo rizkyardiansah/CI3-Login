@@ -69,8 +69,13 @@ class Admin extends CI_Controller
 
     public function editRole()
     {
-        $this->adminMod->updateRole();
-        $this->session->set_flashdata('flash', ['type' => 'success', 'text' => 'Role has been updated!']);
+        $this->form_validation->set_rules('name', 'Role Name', 'required|trim');
+        if ($this->form_validation->run()) {
+            $this->adminMod->updateRole();
+            $this->session->set_flashdata('flash', ['type' => 'success', 'text' => 'Role has been updated!']);
+        } else {
+            $this->session->set_flashdata('flash', ['type' => 'danger', 'text' => 'Role name is required']);
+        }
         redirect('admin/role');
     }
 

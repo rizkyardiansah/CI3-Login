@@ -46,7 +46,7 @@
                     <?php if ($submenu['is_active'] == 1) : ?>
                         <a class="nav-link pt-0" href="<?= base_url() . $submenu['url']; ?>">
                         <?php else : ?>
-                            <a href="" class="nav-link disabled">
+                            <a href="" class="nav-link pt-0 disabled">
                             <?php endif; ?>
                             <i class="<?= $submenu['icon']; ?>"></i>
                             <span><?= $submenu['name']; ?></span></a>

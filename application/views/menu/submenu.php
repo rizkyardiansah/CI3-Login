@@ -6,7 +6,8 @@
         <div class="col-lg">
             <h1 class="mb-3"><?= $title; ?></h1>
 
-            <a href="" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addSubmenuModal">Add New Submenu</a>
+            <a href="" class="btn btn-primary mb-3 addSubmenu" data-toggle="modal" data-target="#submenuModal">Add New Submenu</a>
+
             <?= form_error('name', '<div class="alert alert-danger">', '</div>'); ?>
             <?= form_error('menu_id', '<div class="alert alert-danger">', '</div>'); ?>
             <?= form_error('icon', '<div class="alert alert-danger">', '</div>'); ?>
@@ -45,8 +46,8 @@
                             <td><a href="<?= base_url($sm['url']); ?>"><?= base_url($sm['url']); ?></a></td>
                             <td><?= ($sm['is_active'] == 1) ? 'Yes' : 'No'; ?></td>
                             <td>
-                                <a href="" class="badge badge-success">Edit</a>
-                                <a href="" class="badge badge-danger">Delete</a>
+                                <a class="badge badge-success editSubmenu" data-toggle="modal" data-target="#submenuModal" data-id="<?= $sm['id']; ?>">Edit</a>
+                                <a href="<?= base_url('menu/deleteSubmenu/') . $sm['id']; ?>" class="badge badge-danger">Delete</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -62,18 +63,18 @@
 <!-- End of Main Content -->
 
 <!-- Modal -->
-<div class="modal fade" id="addSubmenuModal" tabindex="-1" role="dialog" aria-labelledby="addSubmenuLabel" aria-hidden="true">
+<div class="modal fade" id="submenuModal" tabindex="-1" role="dialog" aria-labelledby="submenuLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addSubmenuLabel">Add New Submenu</h5>
+                <h5 class="modal-title" id="submenuLabel">Add New Submenu</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
 
-            <form action="<?= base_url('menu/addSubmenu'); ?>" method="POST">
-
+            <form action="" method="POST">
+                <input type="hidden" id="id" name="id">
                 <div class="modal-body">
                     <div class="form-group">
                         <input type="text" class="form-control" id="name" name="name" placeholder="Enter submenu name..." value="<?= set_value('name'); ?>">

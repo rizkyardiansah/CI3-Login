@@ -5,12 +5,12 @@
     <div class="row">
         <div class="col-lg-8">
             <h1 class="mb-3"><?= $title; ?></h1>
-            <div class="card">
-                <div class="card-horizontal">
-                    <div>
-                        <img style="width: 18rem;" src="<?= base_url('assets/img/profile/') . $user['profile_img']; ?>" alt="Card image cap">
+            <div class="card row">
+                <div class="card-horizontal col-lg">
+                    <div class="col-lg-4">
+                        <img class="img-thumbnail" src="<?= base_url('assets/img/profile/') . $user['profile_img']; ?>" alt="Card image cap">
                     </div>
-                    <div class="card-body">
+                    <div class="card-body col-lg-8">
                         <h4 class="card-title"><?= $user['name']; ?></h4>
                         <p class="card-text"><?= $user['email']; ?></p>
                     </div>
